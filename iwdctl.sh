@@ -69,9 +69,27 @@ iwd_statusD() {
 	su -c 'systemctl status iwd'
 }
 
-check_init
+iwd_pass() {
+	echo "Enter your network SSID: "
+	read ssid
+	echo "Does the network have a password? (Y/N)"
+	read answer
+	if [ $answer = "y" ]; then
+		echo -n "Enter your passphrase: "
+		read -s pass
+		echo
+		iwctl --passphrase $pass station wlan0 connect $ssid
+	else
+		iwctl station wlan0 connect $ssid
+	fi
+}
+
+
 case "$1" in
 	start)
+		# checks the init
+		check_init
+
 		if [ "$init" = "OpenRC" ]; then
 			iwd_startRC
 		else
@@ -79,6 +97,8 @@ case "$1" in
 		fi
 		;;
 	stop)
+		check_init
+
 		if [ "$init" = "OpenRC" ]; then
 			iwd_stopRC
 		else
@@ -86,6 +106,8 @@ case "$1" in
 		fi
 		;;
 	status)
+		check_init 
+
 		if [ "$init" = "OpenRC" ]; then
 			iwd_statusRC
 		else
@@ -94,6 +116,8 @@ case "$1" in
 		;;
 		
 	restart)
+		check_init
+
 		if [ "$init" = "OpenRC" ]; then
 			iwd_stopRC
 			iwd_startRC
@@ -102,9 +126,11 @@ case "$1" in
 			iwd_startD
 		fi
 		;;
+	connect)
+		iwd_pass;;
 		
 	*)
-		echo "Usage: $0 {start|stop|restart|status}"
+		echo "Usage: $0 {start|stop|restart|status|connect}"
 		exit 1
 		;;
 esac
