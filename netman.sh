@@ -19,10 +19,10 @@ function netman() {
 function choice() {
 	read -p "Enter your desired action [1-10]: " choice
 	case $choice in 
-		1) systemctl restart iwd ;;
-		2) systemctl status iwd ;;
-		3) systemctl stop iwd ;;
-		4) systemctl start iwd ;;
+		1) ./iwdctl.sh restart ;;
+		2) ./iwdctl.sh status  ;;
+		3) ./iwdctl.sh stop  ;;
+		4) ./iwdctl.sh start ;;
 		5) echo "Enter your network SSID"
 			read ssid
 			echo "Enter your passphrase"
